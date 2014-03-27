@@ -1,0 +1,8 @@
+; $Id: avyhzrd.info,v 1.0 2012/09/29 10:01:29 jimurl Exp $
+name = Avalanchd Hazard Ratings Filter
+description = Colorizes and links the ratings such as LOW MODERATE, HIGH , etc.
+package = Input filters
+core = 6.x
+
+
+

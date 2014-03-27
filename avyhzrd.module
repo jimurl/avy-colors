@@ -1,0 +1,67 @@
+<?php
+// $Id: avyhzrd.module,v 1.1 2012/09/29 10:01:29 jimurl Exp $
+
+/**
+ * @file
+ * Avy Hazard filter: because not everybody knows as much as you
+ *  about LOW MODERATE CONSIDERABLE and HIGH and EXTREME/
+
+/**
+ * Implementation of hook_filter().
+ */
+function avyhzrd_filter($op, $delta = 0, $format = -1, $text = '', $cache_id = 0) {
+  switch ($op) {
+    case 'list':
+      return array(t('Avalanche Hazard Ratings filter'));
+
+    case 'description':
+      return t('When entering Avalanche hazard rating in CAPS, e.g. LOW, MODERATE, HIGH, CONSIDERABLE ,etc, they will be colorized.');
+
+    case 'no cache':
+      // This case can be removed for most filters, but returning TRUE is useful for development.
+      return FALSE;
+
+    case 'prepare':
+      return $text;
+
+    case 'process':
+      // Run the text through regex.
+      $text = preg_replace('/([\s?>&])LOW([\s?<&])/', '$1<span style = "background-color: #4db748; font-weight: bolder;"><span class = "avyhzrd-low">LOW</span></span>$2', $text);
+      $text = preg_replace('/([\s?>&])MODERATE([\s?<&])/', '$1<span style = "background-color: #fef102; font-weight: bolder;"><span class = "avayhzrd-moderate">MODERATE</span></span>$2', $text);
+      $text = preg_replace('/([\s?>&])HIGH([\s?<&])/', '$1<span style = "background-color: #ee1d23; font-weight: bolder;"><span class = "avayhzrd-high">HIGH</span></span>$2', $text);
+      $text = preg_replace('/([\s?>&])CONSIDERABLE([\s?<&])/', '$1<span style = "background-color: #f8931d; font-weight: bolder;"><span class = "avayhzrd-considerable">CONSIDERABLE</span></span>$2', $text);
+      $text = preg_replace('/([\s?>&])EXTREME([\s?<&])/', '$1<span style = "background-color: #000000; font-weight: bolder; color: #ffffff;"><span class = "avayhzrd-extreme">EXTREME</span></span>$2', $text);
+      return $text;
+
+    case 'settings':
+      return avyhzrd_filter_settings();
+      return;
+  }
+}
+
+/**
+ * Implementation of hook_filter_tips().
+ */
+function avyhzrd_filter_tips($delta, $format, $long = FALSE) {
+  // OPTIONAL: If more than one filter was defined in hook_filter, perform switch on $delta
+  switch ($long) {
+    case FALSE:
+      return t('Avalanche Hazard Rating colorizer and links to the offical chart.');
+    case TRUE:
+      return '<p>' . t('This filter converts LOW, MODERATE, CONSIDERABLE, HIGH, and EXTREME with colors: LOW: 4db748 , MODERATE: fef102 ; CONSIDERABLE : f8931d') . '</p>';
+  }
+}
+
+function avyhzrd_filter_settings() {
+  $form['avyhzrd_filter'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Avalanche Hazard Ratings filter'),
+  );
+  $form['avyhzrd_filter']['avyhzrd_display_tip'] = array(
+    '#title' => t('Display Avy Rataing Hazard filter tip'),
+    '#description' => t('Use this filter on Avalanche Bulletin type nodes'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('avyhzrd_display_tip', 1),
+  );
+  return $form;
+}
